@@ -1,0 +1,2 @@
+default:
+    resource: routes-public.yaml
