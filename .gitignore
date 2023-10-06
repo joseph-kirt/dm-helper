@@ -43,3 +43,7 @@ mysql/
 /app/.env.local
 /app/var
 /app/vendor
+/app/node_modules
+/app/public/js/generated
+/app/public/js/fos_js_routes.json
+/app/public/css/generated

@@ -20,6 +20,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+            - '../src/helpers.php'
             - '../migrations/'
 
     # controllers are imported separately to make sure services can be injected

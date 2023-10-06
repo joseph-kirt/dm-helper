@@ -22,8 +22,10 @@
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "~2.16.0",
         "enlightn/security-checker": "~1.10.0",
+        "friendsofsymfony/jsrouting-bundle": "^3.3",
         "illuminate/support": "^10.26",
         "jms/serializer": "~3.23.0",
+        "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",
         "symfony/dotenv": "6.3.*",
         "symfony/flex": "^2",
@@ -44,7 +46,10 @@
     "autoload-dev": {
         "psr-4": {
             "App\\Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

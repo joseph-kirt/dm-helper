@@ -5,7 +5,6 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerClassRepository")
@@ -13,6 +12,13 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class PlayerClass extends BaseEntity
 {
+    public const STRENGTH = 'Strength';
+    public const DEXTERITY = 'Dexterity';
+    public const CONSTITUTION = 'Constitution';
+    public const WISDOM = 'Wisdom';
+    public const INTELLIGENCE = 'Intelligence';
+    public const CHARISMA = 'Charisma';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -22,21 +28,18 @@ class PlayerClass extends BaseEntity
 
     /**
      * @ORM\ManyToMany(targetEntity="Player", mappedBy="playerClasses")
-     * @Serializer\Exclude()
      */
     private Collection $players;
 
     /**
      * @ORM\ManyToMany(targetEntity="ArmorType", inversedBy="playerClasses")
      * @ORM\JoinTable(name="armor_type_player_class", joinColumns={@ORM\JoinColumn(name="player_class_id", referencedColumnName="id", onDelete="CASCADE")}, inverseJoinColumns={@ORM\JoinColumn(name="armor_type_id", referencedColumnName="id", onDelete="CASCADE")})
-     * @Serializer\Exclude()
      */
     private Collection $armorTypes;
 
     /**
      * @ORM\ManyToMany(targetEntity="WeaponType", inversedBy="playerClasses")
      * @ORM\JoinTable(name="player_class_weapon_type", joinColumns={@ORM\JoinColumn(name="player_class_id", referencedColumnName="id", onDelete="CASCADE")}, inverseJoinColumns={@ORM\JoinColumn(name="weapon_type_id", referencedColumnName="id", onDelete="CASCADE")})
-     * @Serializer\Exclude()
      */
     private Collection $weaponTypes;
 
@@ -169,5 +172,57 @@ class PlayerClass extends BaseEntity
         $this->secondaryStatistic = $secondaryStatistic;
 
         return $this;
+    }
+
+    public function getFormattedArmorTypes(): array
+    {
+        $results = [];
+        $armorTypes = $this->getArmorTypes();
+
+        /** @var ArmorType $armorType */
+        foreach ($armorTypes as $armorType) {
+            $results[] = $armorType->jsonSerialize();
+        }
+
+        return $results;
+    }
+
+    public function getFormattedWeaponTypes(): array
+    {
+        $results = [];
+        $weaponTypes = $this->getWeaponTypes();
+
+        /** @var WeaponType $weaponType */
+        foreach ($weaponTypes as $weaponType) {
+            $results[] = $weaponType->jsonSerialize();
+        }
+
+        return $results;
+    }
+
+    public function getFormattedPlayers(): array
+    {
+        $results = [];
+        $players = $this->getPlayers();
+
+        /** @var Player $player */
+        foreach ($players as $player) {
+            $results[] = $player->jsonSerialize();
+        }
+
+        return $results;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id'           => $this->getId(),
+            'name'         => $this->getName(),
+            'primary'      => $this->getPrimaryStatistic(),
+            'secondary'    => $this->getSecondaryStatistic(),
+            'armor_types'  => $this->getFormattedArmorTypes(),
+            'weapon_types' => $this->getFormattedWeaponTypes(),
+            'players'      => $this->getFormattedPlayers()
+        ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace DoctrineMigrations;
 
+use App\Entity\PlayerClass;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -37,7 +38,7 @@ class Version20230929194512 extends AbstractMigration implements ContainerAwareI
     {
         $this->connection->executeStatement('INSERT INTO armor_type (name, max_dexterity_bonus, has_stealth_penalty) VALUES (:name, NULL, FALSE)', ['name' => 'Leather Armor']);
         $this->connection->executeStatement('INSERT INTO weapon_type (name, number_of_dice, dice_sides) VALUES (:name, :numberOfDice, :diceSides)', ['name' => 'Dagger', 'numberOfDice' => 1, 'diceSides' => 4]);
-        $this->connection->executeStatement('INSERT INTO player_classes (name, primary_statistic, secondary_statistic) VALUES (:name, :primary, :secondary)', ['name' => 'Rogue', 'primary' => 'dexterity', 'secondary' => 'constitution']);
+        $this->connection->executeStatement('INSERT INTO player_classes (name, primary_statistic, secondary_statistic) VALUES (:name, :primary, :secondary)', ['name' => 'Rogue', 'primary' => PlayerClass::DEXTERITY, 'secondary' => PlayerClass::CONSTITUTION]);
         $this->connection->executeStatement('INSERT INTO player_class_weapon_type (player_class_id, weapon_type_id) VALUES (:playerClass, :weaponType)', ['playerClass' => 1, 'weaponType' => 1]);
         $this->connection->executeStatement('INSERT INTO armor_type_player_class (player_class_id, armor_type_id) VALUES (:playerClass, :armorType)', ['playerClass' => 1, 'armorType' => 1]);
         parent::postUp($schema);

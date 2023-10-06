@@ -17,7 +17,7 @@ class HomeController extends AbstractController
 
     public function index(): Response
     {
-        $playerClasses = $this->playerClassRepository->findAll(true);
+        $playerClasses = $this->playerClassRepository->findAll();
         return $this->render('home/index.html.twig', ['player_classes' => $playerClasses]);
     }
 }
