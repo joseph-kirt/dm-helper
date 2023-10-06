@@ -39,3 +39,7 @@
 # Extra
 mysql/
 .idea/
+/app/.env
+/app/.env.local
+/app/var
+/app/vendor
