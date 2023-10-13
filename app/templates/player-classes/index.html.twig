@@ -1,0 +1,43 @@
+{% extends 'layout/content_padded.html.twig' %}
+
+{% block pageContent %}
+    <div id="app">
+        <div class="flex flex-row" v-for="player_class in player_classes">
+            <div>
+                <h3>Class: </h3>
+                <p>${ player_class.name }</p>
+            </div>
+            <h3>Primary Stat: </h3>
+            <p>${ player_class.primary }</p>
+            <h3>Secondary Stat: </h3>
+            <p>${ player_class.secondary }</p>
+            <h3>Armor Types: </h3>
+            <div v-for="armor_type in player_class.armor_types">
+                <p>Name: ${ armor_type.name }</p>
+                <p>Max Dexterity Bonus: ${ armor_type.max_dexterity_bonus ?? 'None' }</p>
+                <p>Has Stealth Penalty: ${ armor_type.has_stealth_penalty ? 'yes' : 'No' }</p>
+            </div>
+            <h3>Weapon Types: </h3>
+            <div v-for="weapon_type in player_class.weapon_types">
+                <p>Name: </p>
+                <p v-html="weapon_type.name"></p>
+                <p>Damage: ${ weapon_type.number_of_dice }d${ weapon_type.dice_sides }</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block inlineJS %}
+    <script defer type="text/javascript">
+        document.ready(function() {
+            createMyApp({
+                data() {
+                    return {
+                        player_classes: {{ player_classes | json_encode | raw }}
+                    };
+                },
+                delimiters: ['${', '}']
+            }).mount('#app');
+        });
+    </script>
+{% endblock %}

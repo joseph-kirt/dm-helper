@@ -2,22 +2,22 @@
 
 namespace App\Controller;
 
-use App\Repository\PlayerClassRepository;
+use App\Repository\PlayersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeController extends AbstractController
 {
-    private PlayerClassRepository $playerClassRepository;
+    private PlayersRepository $playersRepository;
 
-    public function __construct(PlayerClassRepository $playerClassRepository)
+    public function __construct(PlayersRepository $playersRepository)
     {
-        $this->playerClassRepository = $playerClassRepository;
+        $this->playersRepository = $playersRepository;
     }
 
     public function index(): Response
     {
-        $playerClasses = $this->playerClassRepository->findAll();
-        return $this->render('home/index.html.twig', ['player_classes' => $playerClasses]);
+        $players = $this->playersRepository->findAll();
+        return $this->render('home/index.html.twig', ['players' => $players]);
     }
 }

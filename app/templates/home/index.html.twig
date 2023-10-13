@@ -4,32 +4,17 @@
     <meta charset="UTF-8">
     <title>{% block title %}DM Helper{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    <link rel="stylesheet" media="screen" href="{{ asset('/css/generated/main.css') }}"
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
 <body>
     {% block body %}
         <div id="app">
-            <div v-for="player_class in player_classes">
-                <h3>Class: </h3>
-                <p>${ player_class.name }</p>
-                <h3>Primary Stat: </h3>
-                <p>${ player_class.primary }</p>
-                <h3>Secondary Stat: </h3>
-                <p>${ player_class.secondary }</p>
-                <h3>Armor Types: </h3>
-                <div v-for="armor_type in player_class.armor_types">
-                    <p>Name: ${ armor_type.name }</p>
-                    <p>Max Dexterity Bonus: ${ armor_type.max_dexterity_bonus ?? 'None' }</p>
-                    <p>Has Stealth Penalty: ${ armor_type.has_stealth_penalty ? 'yes' : 'No' }</p>
-                </div>
-                <h3>Weapon Types: </h3>
-                <div v-for="weapon_type in player_class.weapon_types">
-                    <p>Name: ${ weapon_type.name }</p>
-                    <p>Damage: ${ weapon_type.number_of_dice }d${ weapon_type.dice_sides }</p>
-                </div>
+            <div v-cloak v-if="players.count > 0" v-for="player in players">
+            </div>
+            <div v-cloak v-else>
+                <p>No players found.</p>
             </div>
         </div>
     {% endblock %}
@@ -39,7 +24,7 @@
             createApp({
                 data() {
                     return {
-                        player_classes: {{ player_classes | json_encode | raw }}
+                        players: {{ players | json_encode | raw }}
                     };
                 },
                 delimiters: ['${', '}']

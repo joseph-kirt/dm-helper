@@ -1,3 +1,9 @@
 home:
     path: /
     controller: App\Controller\HomeController::index
+    methods: [GET]
+
+player_classes:
+    path: /player-classes
+    controller: App\Controller\PlayerClassesController::index
+    methods: [GET]

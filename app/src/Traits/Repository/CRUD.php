@@ -4,12 +4,11 @@ namespace App\Traits\Repository;
 
 use App\Facades\Logger;
 use App\Support\Collection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
 use function ceil;
 use function count;
 
@@ -18,7 +17,7 @@ trait CRUD
     public function save($entity, bool $flush = true): bool
     {
         try {
-            $this->_em->persist($entity);
+            $this->getEntityManager()->persist($entity);
 
             if ($flush) {
                 $this->flush();
@@ -35,12 +34,12 @@ trait CRUD
     public function delete($entity, bool $flush = true): void
     {
         try {
-            $this->_em->remove($entity);
+            $this->getEntityManager()->remove($entity);
 
             if ($flush) {
-                $this->_em->flush();
+                $this->getEntityManager()->flush();
             }
-        } catch (OptimisticLockException|Exception $e) {
+        } catch (Exception $e) {
             Logger::warning($e->getMessage(), ['exception' => $e]);
         }
     }
@@ -48,7 +47,7 @@ trait CRUD
     public function flush(): void
     {
         try {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         } catch (Exception $e) {
             Logger::warning($e->getMessage(), ['exception' => $e]);
         }
@@ -101,11 +100,7 @@ trait CRUD
         return null;
     }
 
-    public function getEntityManager(): EntityManager
-    {
-        return $this->_em;
-    }
-
+    #[ArrayShape(['count' => "int|null", 'pages' => "int", 'results' => "mixed"])]
     public function getPaginatedResults($qb, int $page = 1, int $maxResults = 10): array
     {
         $paginator = new Paginator($qb);
@@ -161,6 +156,7 @@ trait CRUD
         return null;
     }
 
+    #[ArrayShape(['count' => "int|null", 'pages' => "int", 'results' => "mixed"])]
     public function executeDQLWithPagination(string $dql, ?array $params = null, int $page = 1, int $resultsPerPage = 10): ?array
     {
         $query = $this->getEntityManager()->createQuery($dql);

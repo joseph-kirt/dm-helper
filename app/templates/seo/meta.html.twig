@@ -1,0 +1,20 @@
+{%- if not is_active -%}
+    <meta name="robots" content="noindex" />
+{% endif -%}
+
+<meta name="description" content="{{ description|raw }}" />
+<meta name="keywords" content="{{ keywords|raw }}" />
+
+{# Essential META Tags #}
+<meta property="og:title" content="{{ title|raw }}">
+<meta property="og:description" content="{{ description|raw }}">
+<meta property="og:image" content="{{ photo }}" />
+{% if url -%}
+    <meta property="og:url" content="{{ url }}" />
+{% endif -%}
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image" />
+
+{# Non-Essential, But Recommended #}
+<meta property="og:site_name" content="{{ site_name|raw }}" />
+<meta name="twitter:image:alt" content="{{ description|raw }}" />

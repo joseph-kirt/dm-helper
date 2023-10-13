@@ -1,0 +1,13 @@
+{% extends 'layout/main.html.twig' %}
+
+{% block content %}
+    {% block inlineJS %}{% endblock %}
+    {% block inlineCSS %}{% endblock %}
+
+    {% block columnSpan %}{% endblock %}
+    <div class="content__padded {% if containerClass is defined %}{{ containerClass|raw }}{% endif %}">
+        {% block pageContent %}{% endblock %}
+    </div>
+    {% block bottomColumnSpan %}{% endblock %}
+
+{% endblock %}

@@ -16,6 +16,7 @@ mix
             })
         ]
     })
+    .sass('assets/sass/main.scss', 'public/css/generated')
     .js('assets/js/main.js', 'public/js/generated')
     .vue()
     .options({

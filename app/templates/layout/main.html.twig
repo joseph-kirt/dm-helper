@@ -1,0 +1,32 @@
+<!doctype html>
+<html class="no-js" lang="en-US">
+<head>
+    <title>{% block title %}DM Helper{% endblock %}</title>
+    {% if meta -%}
+        <title>{{ meta.title|raw }}</title>
+        {% include 'seo/meta.html.twig' with meta only -%}
+    {%- endif %}
+
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" media="screen" href="{{ asset('/css/generated/main.css') }}" />
+
+    <script type="text/javascript" defer src="{{ asset('/js/generated/main.js') }}"></script>
+
+    {% block meta %}{% endblock %}
+    {% block scripts %}{% endblock %}
+</head>
+<body>
+{% include 'layout/header.html.twig' %}
+<div class="header__spacer"></div>
+{% block content %}{% endblock %}
+<footer class="site-footer">
+</footer>
+</body>
+</html>
