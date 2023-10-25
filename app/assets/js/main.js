@@ -11,11 +11,20 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.path = Routing;
 window.axios = axios;
 window.createMyApp = (options) => {
-      const app = createApp(options);
-      app.config.globalProperties.$http = axios;
-      app.config.globalProperties.$routing = Routing;
+    const app = createApp(options);
+    app.config.globalProperties.$http = axios;
+    app.config.globalProperties.$routing = Routing;
 
-      return app;
+    return app;
+};
+
+window.toggleMobileNav = () => {
+    var x = document.getElementById("myTopnav");
+    if (x.className === "topnav") {
+        x.className += " responsive";
+    } else {
+        x.className = "topnav";
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function() {

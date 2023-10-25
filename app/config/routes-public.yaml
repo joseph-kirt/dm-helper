@@ -7,3 +7,13 @@ player_classes:
     path: /player-classes
     controller: App\Controller\PlayerClassesController::index
     methods: [GET]
+
+armor_types:
+    path: /armor-types
+    controller: App\Controller\PlayerClassesController::index
+    methods: [GET]
+
+weapon_types:
+    path: /weapon-types
+    controller: App\Controller\PlayerClassesController::index
+    methods: [GET]

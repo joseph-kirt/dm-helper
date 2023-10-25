@@ -1,4 +1,14 @@
-<header role="banner" class="header">
-    <nav class="header__nav">
+<header>
+    {% set currentPath = path(app.request.attributes.get('_route')) %}
+
+    <nav class="topnav" id="myTopnav">
+        <a href="{{ path('home') }}"><img src="{{ asset('/images/twenty-sided-dice.svg') }}" alt="Twenty Sided Dice" class="topnav-logo"></a>
+        <a href="{{ path('home') }}" {% if currentPath == path('home') %}class="active"{% endif %}>Players</a>
+        <a href="{{ path('player_classes') }}" {% if currentPath == path('player_classes') %}class="active"{% endif %}>Player Classes</a>
+        <a href="{{ path('weapon_types') }}" {% if currentPath == path('weapon_types') %}class="active"{% endif %}>Weapon Types</a>
+        <a href="{{ path('armor_types') }}" {% if currentPath == path('armor_types') %}class="active"{% endif %}>Armor Types</a>
+        <a href="javascript:void(0);" class="icon" onclick="toggleMobileNav()">
+            <i class="fa fa-bars"></i>
+        </a>
     </nav>
 </header>
