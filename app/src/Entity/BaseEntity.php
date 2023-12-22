@@ -10,9 +10,7 @@ use JMS\Serializer\SerializerBuilder;
 use JsonException;
 use JsonSerializable;
 
-/**
- * @ORM\MappedSuperclass
- */
+#[ORM\MappedSuperclass]
 abstract class BaseEntity implements ArrayAccess, JsonSerializable
 {
     use Arrayable;

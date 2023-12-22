@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Repository\PlayerClassRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\PlayerClassRepository")
- * @ORM\Table(name="player_classes", indexes={@ORM\Index(name="player_class_idx", columns={"name", "primary_statistic", "secondary_statistic"})})
- */
+#[ORM\Entity(repositoryClass: PlayerClassRepository::class)]
+#[ORM\Table(name: 'player_classes')]
+#[ORM\Index(columns: ['name'], name: 'player_class_name_idx')]
+#[ORM\Index(columns: ['primary_statistic'], name: 'player_class_primary_statistic_idx')]
+#[ORM\Index(columns: ['secondary_statistic'], name: 'player_class_secondary_statistic_idx')]
 class PlayerClass extends BaseEntity
 {
     public const STRENGTH = 'Strength';
@@ -19,43 +21,33 @@ class PlayerClass extends BaseEntity
     public const INTELLIGENCE = 'Intelligence';
     public const CHARISMA = 'Charisma';
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer", options={"unsigned":true})
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Player", mappedBy="playerClasses")
-     */
+    #[ORM\ManyToMany(targetEntity: Player::class, mappedBy: 'playerClasses')]
     private Collection $players;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="ArmorType", inversedBy="playerClasses")
-     * @ORM\JoinTable(name="armor_type_player_class", joinColumns={@ORM\JoinColumn(name="player_class_id", referencedColumnName="id", onDelete="CASCADE")}, inverseJoinColumns={@ORM\JoinColumn(name="armor_type_id", referencedColumnName="id", onDelete="CASCADE")})
-     */
+    #[ORM\ManyToMany(targetEntity: ArmorType::class, inversedBy: 'playerClasses')]
+    #[ORM\JoinTable(name: 'armor_type_player_class')]
+    #[ORM\JoinColumn(name: 'player_class_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'armor_type_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Collection $armorTypes;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="WeaponType", inversedBy="playerClasses")
-     * @ORM\JoinTable(name="player_class_weapon_type", joinColumns={@ORM\JoinColumn(name="player_class_id", referencedColumnName="id", onDelete="CASCADE")}, inverseJoinColumns={@ORM\JoinColumn(name="weapon_type_id", referencedColumnName="id", onDelete="CASCADE")})
-     */
+    #[ORM\ManyToMany(targetEntity: WeaponType::class, inversedBy: 'playerClasses')]
+    #[ORM\JoinTable(name: 'player_class_weapon_type')]
+    #[ORM\JoinColumn(name: 'player_class_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'weapon_type_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private Collection $weaponTypes;
 
-    /**
-     * @ORM\Column(type="string", length=256)
-     */
+    #[ORM\Column(type: 'string', length: 256)]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", length=256)
-     */
+    #[ORM\Column(type: 'string', length: 256)]
     private ?string $primaryStatistic = null;
 
-    /**
-     * @ORM\Column(type="string", length=256)
-     */
+    #[ORM\Column(type: 'string', length: 256)]
     private ?string $secondaryStatistic = null;
 
     public function __construct(array $attributes = [])

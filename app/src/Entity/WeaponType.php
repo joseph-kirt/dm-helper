@@ -6,38 +6,27 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="weapon_type", indexes={@ORM\Index(name="weapon_type_idx", columns={"name"})})
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'weapon_type')]
+#[ORM\Index(columns: ['name'], name: 'weapon_type_name_idx')]
 class WeaponType extends BaseEntity
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer", options={"unsigned":true})
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $id = null;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="PlayerClass", mappedBy="weaponTypes")
-     * @Serializer\Exclude()
-     */
+    #[ORM\ManyToMany(targetEntity: PlayerClass::class, mappedBy: 'weaponTypes')]
+    #[Serializer\Exclude]
     private Collection $playerClasses;
 
-    /**
-     * @ORM\Column(type="string", length=256)
-     */
+    #[ORM\Column(type: 'string', length: 256)]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="integer", options={"unsigned":true})
-     */
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $numberOfDice = null;
 
-    /**
-     * @ORM\Column(type="integer", options={"unsigned":true})
-     */
+    #[ORM\Column(type: 'integer', options: ['unsigned' => true])]
     private ?int $diceSides = null;
 
     public function getId(): ?int
