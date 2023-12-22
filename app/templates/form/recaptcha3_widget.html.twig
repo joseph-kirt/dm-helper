@@ -1,0 +1,55 @@
+{% block recaptcha3_widget %}
+    {% apply spaceless %}
+        {%- set type = type|default('hidden') -%}
+        {{ block('form_widget_simple') }}
+
+        {% if form.vars.enabled -%}
+            <div class="error-box js-recaptcha-warning hidden">
+                <strong>{{ 'captcha.load_failure_title' | trans | raw }}</strong>
+                <p>{{ 'captcha.load_failure' | trans | raw }}</p>
+            </div>
+
+            {% set validJsId = id | replace({'-':'_'}) %}
+            <script>
+                window.recaptchaCallback_{{ validJsId }}_did_load = false;
+                window.recaptchaCallback_{{ validJsId }} = function() {
+                    document.querySelectorAll('.error-box.js-recaptcha-warning').forEach(function(elem) {
+                        elem.parentNode.removeChild(elem);
+                    });
+                    // Set flag to show that captcha did load
+                    window.recaptchaCallback_{{ validJsId }}_did_load = true;
+                };
+
+                // Capture form submission.
+                let grecaptchaInput = document.getElementById('{{ id }}');
+                let grecaptchaForm = grecaptchaInput.form;
+                // Always reset the value to get a new challenge
+                grecaptchaInput.value = '';
+                grecaptchaForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    if (!window.recaptchaCallback_{{ validJsId }}_did_load) {
+                        alert("{{ 'captcha.load_failure_alert' | trans | raw }}");
+                        return false;
+                    }
+
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('{{ form.vars.site_key }}', {action: '{{ form.vars.action_name }}'}).then(function(token) {
+                            grecaptchaInput.value = token;
+                            // Actually submit form
+                            HTMLFormElement.prototype.submit.call(grecaptchaForm);
+                        });
+                    });
+                }, false);
+
+                // Reveal the Captcha warning after 1 second to keep it from flashing on page load
+                setTimeout(function() {
+                    document.querySelectorAll('.error-box.js-recaptcha-warning').forEach((elem) => {
+                        elem.classList.remove('hidden');
+                    });
+                }, 1000);
+            </script>
+            <script src="https://{{ form.vars.host }}/recaptcha/api.js?render={{ form.vars.site_key }}&hl={{ form.vars.locale }}&onload=recaptchaCallback_{{ validJsId }}" async defer></script>
+        {%- endif %}
+    {% endapply %}
+{% endblock %}

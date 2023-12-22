@@ -1,0 +1,194 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="error-box">
+            {%- for error in errors -%}
+                <p>{{ error.message }}</p>
+            {%- endfor -%}
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block choice_widget_collapsed -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-item__select')|trim}) -%}
+    {%- if required and placeholder is none and not placeholder_in_choices and not multiple and (attr.size is not defined or attr.size <= 1) -%}
+        {% set required = false %}
+    {%- endif -%}
+    <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+        {%- if placeholder is not none -%}
+            <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+        {%- endif -%}
+        {%- if preferred_choices|length > 0 -%}
+            {% set options = preferred_choices %}
+            {{- block('choice_widget_options') -}}
+            {%- if choices|length > 0 and separator is not none -%}
+                <option disabled="disabled">{{ separator }}</option>
+            {%- endif -%}
+        {%- endif -%}
+        {%- set options = choices -%}
+        {{- block('choice_widget_options') -}}
+    </select>
+{%- endblock choice_widget_collapsed -%}
+
+{%- block choice_widget_expanded -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-item__choice')|trim}) -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            {%- set type = child.vars.block_prefixes | slice(-2,1) | first -%}
+            {%- if type == 'checkbox' -%}
+                {%- set alternate = loop.index % 2 == 0 ? 'even' : 'odd' -%}
+                <div class="column column--3 column--tablet-4 column--mobile-12">
+                <div class="form-item__checkbox-grid form-item__checkbox-grid--{{ alternate }}">
+            {%- endif -%}
+            {{- form_widget(child) -}}
+            {{- form_label(child, null, {label_attr:{class: 'form-item__label--' ~ type},translation_domain: choice_translation_domain}) -}}
+            {%- if type == 'checkbox' -%}
+                </div>
+                </div>
+            {%- endif -%}
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{% block choice_groups_row %}
+    {% for child in form.children|filter(child => not child.rendered) %}
+        {%- if 'text' in child.vars.block_prefixes %}
+            {% with child.vars only %}
+                {{ block('form_row') }}
+                <br>
+            {% endwith %}
+        {%- else %}
+            <div class="form-item">
+                {{ form_label(child) }}
+                <ul class="filter-grid">
+                    {% for item in child.children %}
+                        <li>
+                            {% with item.vars only %}
+                                {{ block('choice_groups_label') }}
+                            {% endwith %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div><br>
+        {%- endif -%}
+    {% endfor %}
+{% endblock %}
+
+{% block choice_groups_label %}
+    {% if label is not same as(false) -%}
+        {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-item__label')|trim}) -%}
+        {% set label_attr = label_attr|merge({'for': id}) %}
+        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {{- form_widget(form, {}) -}}
+        {%- if translation_domain is same as(false) -%}
+            {%- if label_html is same as(false) -%}
+                {{- label -}}
+            {%- else -%}
+                {{- label|raw -}}
+            {%- endif -%}
+        {%- else -%}
+            {%- if label_html is same as(false) -%}
+                {{- label|trans(label_translation_parameters, translation_domain) -}}
+            {%- else -%}
+                {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
+            {%- endif -%}
+        {%- endif -%}
+        </{{ element|default('label') }}>
+    {%- endif -%}
+{% endblock %}
+
+{% block form_widget_simple %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-item__input')|trim}) -%}
+    {{- parent() -}}
+{% endblock form_widget_simple %}
+
+{% block checkbox_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-item__checkbox')|trim}) -%}
+    {{- parent() -}}
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-item__radio')|trim}) -%}
+    {{- parent() -}}
+{% endblock radio_widget %}
+
+{% block form_label %}
+    {% if label is not same as(false) -%}
+        {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-item__label')|trim}) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+        {% if required and label_attr[':class'] is not defined -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif -%}
+        {% if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize|title %}
+            {%- endif -%}
+        {%- endif -%}
+        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {%- if 'checkbox' in form.vars.block_prefixes and 'radio' not in form.vars.block_prefixes and 'choice' not in form.parent.vars.block_prefixes %}
+            {{- form_widget(form, {}) -}}
+        {%- endif -%}
+        {%- if translation_domain is same as(false) -%}
+            {%- if label_html is same as(false) -%}
+                {{- label -}}
+            {%- else -%}
+                {{- label|raw -}}
+            {%- endif -%}
+        {%- else -%}
+            {%- if label_html is same as(false) -%}
+                {{- label|trans(label_translation_parameters, translation_domain) -}}
+            {%- else -%}
+                {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
+            {%- endif -%}
+        {%- endif -%}
+        </{{ element|default('label') }}>
+    {%- endif -%}
+{% endblock form_label %}
+
+{% block form_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+
+    {# Correctly set class names if row_attr.class is already set #}
+    {%- if row_attr.class is not defined -%}
+        {%- set row_attr = row_attr|merge({'class': 'form-item'}) -%}
+    {%- endif -%}
+    {%- if 'textarea' in form.vars.block_prefixes %}
+        {%- set row_attr = row_attr|merge({'class': row_attr.class ~ ' text-area'}) -%}
+    {%- endif -%}
+    {%- if 'date' in form.vars.block_prefixes %}
+        {%- set row_attr = row_attr|merge({'class': row_attr.class ~ ' date-field'}) -%}
+    {%- endif -%}
+    {%- if 'checkbox' in form.vars.block_prefixes and 'radio' not in form.vars.block_prefixes and 'choice' not in form.parent.vars.block_prefixes %}
+        {%- set row_attr = row_attr|merge({'class': row_attr.class ~ ' check-field'}) -%}
+    {%- endif -%}
+    {%- if form.vars.attr['data-indent'] -%}
+        {%- set row_attr = row_attr|merge({'class': row_attr.class ~ ' ' ~ form.vars.attr['data-indent']}) -%}
+    {%- endif -%}
+    {%- if errors|length > 0 -%}
+        {%- set row_attr = row_attr|merge({'class': row_attr.class ~ ' error'}) -%}
+    {%- endif -%}
+
+    <div {% if row_attr %}{% with { attr: row_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {%- if 'checkbox' in form.vars.block_prefixes and 'radio' not in form.vars.block_prefixes and 'choice' not in form.parent.vars.block_prefixes %}
+            {{- form_label(form) -}}
+        {%- else -%}
+            {{- form_label(form) -}}
+            {{- form_widget(form, widget_attr) -}}
+            {{- form_help(form) -}}
+            {%- if 'form-item--horizontal' not in row_attr.class -%}
+                {{- form_errors(form) -}}
+            {%- endif -%}
+        {%- endif -%}
+    </div>
+{%- endblock form_row %}
