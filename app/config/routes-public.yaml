@@ -1,5 +1,10 @@
 home:
     path: /
+    controller: App\Controller\LoginController::index
+    methods: [GET, POST]
+
+dashboard:
+    path: /dashboard
     controller: App\Controller\HomeController::index
     methods: [GET]
 
